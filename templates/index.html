@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Akili ni Mali</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <div class="logo">Akili ni Mali</div>
+      <div class="nav-links">
+        <a href="/docs">Docs</a>
+        <a href="/health">Health</a>
+        <a href="/demo" class="btn btn-small">Live Demo</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="badge">Africa’s Mobile Money Intelligence Platform</div>
+      <h1>AI credit scoring for unbanked SMEs in Tanzania</h1>
+      <p>
+        Analyze mobile money transactions, detect anomalies, evaluate cash flow,
+        and generate explainable lending decisions for small businesses.
+      </p>
+
+      <div class="hero-actions">
+        <a href="/demo" class="btn">Try Demo</a>
+        <a href="/docs" class="btn btn-secondary">View API Docs</a>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h3>Smart Scoring</h3>
+        <p>Weighted financial health scoring using transaction stability, revenue trend, and cashflow quality.</p>
+      </div>
+      <div class="card">
+        <h3>Anomaly Detection</h3>
+        <p>Flags issues like suspiciously high margins, loan inflation, or missing expense patterns.</p>
+      </div>
+      <div class="card">
+        <h3>Explainable Decisions</h3>
+        <p>Not just approve or decline — the engine explains why, with confidence and next steps.</p>
+      </div>
+    </section>
+
+    <section class="card big-card">
+      <h2>Available Endpoints</h2>
+      <div class="endpoint"><span>GET</span> /health</div>
+      <div class="endpoint"><span>GET</span> /docs</div>
+      <div class="endpoint"><span>GET / POST</span> /analyze/demo</div>
+      <div class="endpoint"><span>POST</span> /analyze</div>
+    </section>
+  </div>
+</body>
+</html>
