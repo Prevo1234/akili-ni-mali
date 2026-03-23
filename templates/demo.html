@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Akili ni Mali Demo</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <div class="logo">Akili ni Mali</div>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/docs">Docs</a>
+      </div>
+    </nav>
+
+    <section class="hero small-hero">
+      <div class="badge">Live Product Demo</div>
+      <h1>Run a business analysis</h1>
+      <p>Choose a demo business type and view the AI-generated credit decision.</p>
+    </section>
+
+    <div class="card controls">
+      <label for="businessType">Business Type</label>
+      <select id="businessType">
+        <option value="duka">Duka</option>
+        <option value="msisitizo">Msisitizo</option>
+        <option value="mapambano">Mapambano</option>
+      </select>
+      <button onclick="runDemo()" class="btn">Run Demo</button>
+    </div>
+
+    <div id="loading" class="card hidden">Running analysis...</div>
+
+    <div id="result" class="hidden">
+      <div class="grid">
+        <div class="card">
+          <h3>Decision</h3>
+          <p id="decision">-</p>
+        </div>
+        <div class="card">
+          <h3>Score</h3>
+          <p id="score">-</p>
+        </div>
+        <div class="card">
+          <h3>Risk</h3>
+          <p id="risk">-</p>
+        </div>
+        <div class="card">
+          <h3>Business Health</h3>
+          <p id="healthStatus">-</p>
+        </div>
+      </div>
+
+      <div class="card big-card">
+        <h2>Business Summary</h2>
+        <p><strong>Name:</strong> <span id="bizName"></span></p>
+        <p><strong>Months analyzed:</strong> <span id="months"></span></p>
+        <p><strong>Avg monthly revenue:</strong> <span id="revenue"></span></p>
+        <p><strong>Avg monthly expenses:</strong> <span id="expenses"></span></p>
+        <p><strong>Max loan amount:</strong> <span id="loan"></span></p>
+      </div>
+
+      <div class="card big-card">
+        <h2>Anomalies</h2>
+        <ul id="anomaliesList"></ul>
+      </div>
+
+      <div class="card big-card">
+        <h2>Reasoning</h2>
+        <ul id="reasoningList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function formatTZS(value) {
+      return new Intl.NumberFormat('en-TZ').format(value) + ' TZS';
+    }
+
+    async function runDemo() {
+      const type = document.getElementById('businessType').value;
+      const loading = document.getElementById('loading');
+      const result = document.getElementById('result');
+
+      loading.classList.remove('hidden');
+      result.classList.add('hidden');
+
+      try {
+        const res = await fetch('/analyze/demo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ business_type: type })
+        });
+
+        const data = await res.json();
+
+        document.getElementById('decision').textContent = data.uamuzi_mkopo?.decision || '-';
+        document.getElementById('score').textContent = data.tathmini?.stability_score || '-';
+        document.getElementById('risk').textContent = data.tathmini?.credit_risk || '-';
+        document.getElementById('healthStatus').textContent = data.tathmini?.business_health || '-';
+
+        document.getElementById('bizName').textContent = data.biashara?.name || '-';
+        document.getElementById('months').textContent = data.biashara?.months_analyzed || '-';
+        document.getElementById('revenue').textContent = formatTZS(data.fedha?.avg_monthly_revenue_tzs || 0);
+        document.getElementById('expenses').textContent = formatTZS(data.fedha?.avg_monthly_expenses_tzs || 0);
+        document.getElementById('loan').textContent = formatTZS(data.uamuzi_mkopo?.max_loan_amount_tzs || 0);
+
+        const anomaliesList = document.getElementById('anomaliesList');
+        anomaliesList.innerHTML = '';
+        (data.anomalies || []).forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = item.message || item.ujumbe || 'Unknown anomaly';
+          anomaliesList.appendChild(li);
+        });
+
+        const reasoningList = document.getElementById('reasoningList');
+        reasoningList.innerHTML = '';
+        (data.tathmini?.reasoning || []).forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = item;
+          reasoningList.appendChild(li);
+        });
+
+        result.classList.remove('hidden');
+      } catch (err) {
+        alert('Demo failed to load.');
+      } finally {
+        loading.classList.add('hidden');
+      }
+    }
+  </script>
+</body>
+</html>
