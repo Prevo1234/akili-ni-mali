@@ -12,7 +12,7 @@
 ╚══════════════════════════════════════════════════════════════╝
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from datetime import datetime, timedelta
 from akili_engine_v2 import FinancialProfileV2
 import random, re, json
@@ -175,28 +175,11 @@ def generate_demo(business_type="duka"):
 
 @app.route("/", methods=["GET"])
 def index():
-    return jsonify({
-        "jina":    "Akili ni Mali API",
-        "toleo":   "2.0.0",
-        "phase":   "Phase 2 — Intelligence Engine Active",
-        "engine":  "FinancialProfileV2 — Hybrid Classifier + Anomaly Detection + XAI Scoring",
-        "vituo": {
-            "GET  /":              "API info",
-            "GET  /health":        "Server health",
-            "POST /analyze":       "Full Phase 2 analysis",
-            "POST /analyze/demo":  "Demo with generated data",
-            "GET  /docs":          "Documentation",
-        },
-        "improvements_over_v1": [
-            "Loans excluded from revenue calculation",
-            "Agent float excluded from revenue",
-            "Anomaly detection — 5 checks",
-            "Decision overrides — 4 rules",
-            "XAI score breakdown — 5 components",
-            "25 Tanzania-specific transaction categories",
-            "Hybrid classifier: rules + patterns + keywords",
-        ]
-    }), 200
+    return render_template("index.html")
+
+@app.route("/demo", methods=["GET"])
+def demo_page():
+    return render_template("demo.html")
 
 
 @app.route("/health", methods=["GET"])
